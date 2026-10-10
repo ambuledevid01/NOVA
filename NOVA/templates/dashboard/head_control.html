@@ -1,0 +1,122 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NOVA | Head Movement Control</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{% static 'css/dashboard/eye_control.css' %}">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="{% static 'js/three_bg/head_bg.js' %}"></script>
+</head>
+
+<body>
+<div class="dashboard-container">
+
+<aside class="sidebar">
+<div class="logo">NOVA Control Center</div>
+<p class="sidebar-desc">Navigate to get started or control your PC hands-free.</p>
+
+<div class="nav-title">Navigation</div>
+
+<ul class="nav-list">
+<li><a href="{% url 'dashboard_page' %}">🏠 Home</a></li>
+<li><a href="{% url 'user_guide' %}">📘 User Guide</a></li>
+<li><a href="{%url 'eye_control' %}">👁 Eye-Movement Mouse Control</a></li>
+<li><a href="{% url 'facial_exp'%}">😊 Facial Expression → Keyboard</a></li>
+<li><a href="{% url 'voice_control' %}">🎤 Voice Control</a></li>
+<li><a href="{%url 'hand_control' %}">✋ Hand Gesture Control</a></li>
+<li class="active"><a href="{% url 'head_control' %}">👤 Head Movement Control</a></li>
+<li><a href="{% url 'settings_page' %}">⚙ Settings</a></li>
+<li><a href="{% url 'about_us' %}">ℹ About Us</a></li>
+</ul>
+</aside>
+
+<main class="main-content">
+
+<h1 class="page-title">Head Movement Control</h1>
+<p class="page-subtitle">
+Use gentle head yaw/pitch to steer the pointer. Nod to click.
+</p>
+
+<div class="feature-wrapper">
+
+<div class="feature-left">
+<div class="preview-box">
+    <img id="videoFeed" 
+         src="{% url 'head_get_encoded_frame' %}" 
+         width="100%" 
+         style="display:none;">
+</div>
+</div>
+
+<div class="feature-right">
+
+<button class="btn-outline start-btn" onclick="runWithCountdown(startHead)">▶ Start Head Control</button>
+<button class="btn-outline stop-btn" onclick="stopHead()">■ Stop Head Control</button>
+
+<div class="slider-group">
+<label>Pointer sensitivity <span>1.20</span></label>
+<input type="range" min="0.40" max="2.50" value="1.20">
+</div>  
+
+<div class="slider-group">
+<label>Nod-to-click sensitivity <span>30</span></label>
+<input type="range" min="10" max="80" value="30">
+</div>
+
+</div>
+
+
+<div class="log-box">Move your head to begin…</div>
+
+</main>
+</div>
+<script>
+function runWithCountdown(startAction) {
+    let countdownOverlay = document.getElementById("countdownOverlay");
+    if (!countdownOverlay) {
+        countdownOverlay = document.createElement("div");
+        countdownOverlay.id = "countdownOverlay";
+        countdownOverlay.style.cssText = "display:flex; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); color:white; font-size:12rem; font-family:'Orbitron', sans-serif; z-index:10000; justify-content:center; align-items:center;";
+        document.body.appendChild(countdownOverlay);
+    }
+    countdownOverlay.style.display = "flex";
+    let count = 3;
+    countdownOverlay.innerText = count;
+    let timer = setInterval(() => {
+        count--;
+        if (count > 0) {
+            countdownOverlay.innerText = count;
+        } else {
+            clearInterval(timer);
+            countdownOverlay.style.display = "none";
+            startAction();
+        }
+    }, 1000);
+}
+
+function startHead() {
+    fetch("{% url 'start_head' %}")
+        .then(res => res.json())
+        .then(data => {
+            document.getElementById("videoFeed").style.display = "block";
+            document.querySelector(".log-box").innerText = "Head control started...";
+        });
+}
+
+function stopHead() {
+    fetch("{% url 'stop_head' %}")
+        .then(res => res.json())
+        .then(data => {
+            document.querySelector(".log-box").innerText = "Head control stopped.";
+        });
+}
+
+window.addEventListener("beforeunload", function() {
+    fetch("{% url 'stop_head' %}", { keepalive: true });
+});
+</script>
+</body>
+</html>

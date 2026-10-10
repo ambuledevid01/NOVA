@@ -1,0 +1,431 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NOVA | User Operating Manual & System Guide</title>
+
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;800&family=Poppins:wght@300;400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+
+<!-- Dashboard Theme CSS -->
+<link rel="stylesheet" href="{% static 'css/user_guide.css' %}">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="{% static 'js/three_bg/voice_bg.js' %}"></script>
+</head>
+
+<body>
+<div class="dashboard-container">
+
+<!-- SIDEBAR NAVIGATION (Matching Web Application) -->
+<aside class="sidebar">
+    <div class="logo">NOVA Control Center</div>
+    <p class="sidebar-desc">
+        Navigate to get started or control your PC hands-free.
+    </p>
+
+    <div class="nav-title">Navigation</div>
+
+    <ul class="nav-list">
+        <li><a href="{% url 'home_page' %}">🏠 Home</a></li>
+        <li class="active"><a href="{% url 'user_guide' %}">📘 User Guide</a></li>
+        <li><a href="{% url 'eye_control' %}">👁 Eye Control</a></li>
+        <li><a href="{% url 'facial_exp' %}">😊 Facial Control</a></li>
+        <li><a href="{% url 'voice_control' %}">🎤 Voice Command Control</a></li>
+        <li><a href="{% url 'hand_control' %}">✋ Hand Gesture Control</a></li>
+        <li><a href="{% url 'head_control' %}">👤 Head Movement Control</a></li>
+        <li><a href="{% url 'settings_page' %}">⚙ Settings</a></li>
+        <li><a href="{% url 'logout_page' %}">🚪 Logout</a></li>
+    </ul>
+
+    <div class="quick-tips">
+        <h4>Manual Tips</h4>
+        <ul>
+            <li>Click any voice phrase to copy it</li>
+            <li>Use search bar to filter functions</li>
+            <li>Run only 1 control mode at once</li>
+        </ul>
+    </div>
+</aside>
+
+<!-- MAIN CONTENT -->
+<main class="main-content">
+
+<h1 class="page-title">User Operating Manual & System Guide</h1>
+<p class="page-subtitle">
+Comprehensive guide to operating all NOVA hands-free control modules: Voice Commands, Eye Tracking, Hand Gestures, Head Movement, Facial Expressions & System Settings.
+</p>
+
+<!-- SEARCH & FILTER SECTION -->
+<div class="search-filter-wrapper">
+    <div class="search-box-container">
+        <span class="search-icon">🔍</span>
+        <input type="text" id="commandSearch" class="search-input" placeholder="Search any function, voice command, app closer, gesture, or setting (e.g. 'close notepad', 'eye click', 'volume')..." onkeyup="filterCommands()">
+        <span id="matchCounter" class="search-stats-badge">6 Modules Active</span>
+    </div>
+
+    <div class="filter-tabs">
+        <button class="tab-btn active" onclick="filterCategory('all', this)">⚡ All Modules</button>
+        <button class="tab-btn" onclick="filterCategory('voice', this)">🎤 Voice Commands</button>
+        <button class="tab-btn" onclick="filterCategory('eye', this)">👁 Eye Tracking</button>
+        <button class="tab-btn" onclick="filterCategory('hand', this)">✋ Hand Gestures</button>
+        <button class="tab-btn" onclick="filterCategory('head', this)">👤 Head Control</button>
+        <button class="tab-btn" onclick="filterCategory('facial', this)">😊 Facial Expressions</button>
+        <button class="tab-btn" onclick="filterCategory('settings', this)">⚙ Settings & Reset</button>
+    </div>
+</div>
+
+<!-- GUIDE CARDS CONTAINER -->
+<div class="guide-container">
+
+    <!-- MODULE 1: VOICE COMMAND CONTROL -->
+    <div class="guide-card" data-category="voice">
+        <div class="card-header">
+            <span class="card-icon">🎤</span>
+            <h2 class="card-title">1. Voice Command Control Module</h2>
+        </div>
+        <p class="card-desc">
+            <strong>How it Operates:</strong> Renders your speech live on screen in real-time as you speak (`interimResults = true`) and executes matched system actions immediately via Python automation. Speak naturally into your mic.
+        </p>
+
+        <h3 style="color:#1abc9c; font-family:'Orbitron',sans-serif; font-size:14px; margin-bottom:10px;">A. App Launchers & Closers</h3>
+        <div class="table-responsive" style="margin-bottom: 20px;">
+            <table class="cyber-table">
+                <thead>
+                    <tr>
+                        <th>Category</th>
+                        <th>Voice Trigger Phrase (Click to Copy)</th>
+                        <th>Action & Functionality</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr data-cat="voice">
+                        <td><span class="badge-tag launcher">Launcher</span></td>
+                        <td><code class="copy-chip" onclick="copyText('open notepad')">"Open Notepad" 📋</code> <code class="copy-chip" onclick="copyText('open chrome')">"Open Chrome" 📋</code></td>
+                        <td>Launches Notepad text editor or Chrome web browser</td>
+                    </tr>
+                    <tr data-cat="voice">
+                        <td><span class="badge-tag launcher">Launcher</span></td>
+                        <td><code class="copy-chip" onclick="copyText('open camera')">"Open Camera" 📋</code> <code class="copy-chip" onclick="copyText('open calculator')">"Open Calculator" 📋</code></td>
+                        <td>Launches Windows Camera app or Calculator</td>
+                    </tr>
+                    <tr data-cat="voice">
+                        <td><span class="badge-tag launcher">Launcher</span></td>
+                        <td><code class="copy-chip" onclick="copyText('open explorer')">"Open Explorer" 📋</code> <code class="copy-chip" onclick="copyText('open terminal')">"Open Terminal" 📋</code></td>
+                        <td>Launches File Manager or Command Prompt Terminal</td>
+                    </tr>
+                    <tr data-cat="voice">
+                        <td><span class="badge-tag launcher">Launcher</span></td>
+                        <td><code class="copy-chip" onclick="copyText('open vs code')">"Open VS Code" 📋</code> <code class="copy-chip" onclick="copyText('open spotify')">"Open Spotify" 📋</code></td>
+                        <td>Launches Visual Studio Code or Spotify music player</td>
+                    </tr>
+                    <tr data-cat="voice">
+                        <td><span class="badge-tag closer">App Exit</span></td>
+                        <td><code class="copy-chip" onclick="copyText('close notepad')">"Close Notepad" 📋</code> <code class="copy-chip" onclick="copyText('close camera')">"Close Camera" 📋</code></td>
+                        <td>Terminates Notepad or Camera app process immediately</td>
+                    </tr>
+                    <tr data-cat="voice">
+                        <td><span class="badge-tag closer">App Exit</span></td>
+                        <td><code class="copy-chip" onclick="copyText('close calc')">"Close Calc" 📋</code> <code class="copy-chip" onclick="copyText('close chrome')">"Close Chrome" 📋</code></td>
+                        <td>Terminates Calculator or Chrome browser process</td>
+                    </tr>
+                    <tr data-cat="voice">
+                        <td><span class="badge-tag closer">App Exit</span></td>
+                        <td><code class="copy-chip" onclick="copyText('close explorer')">"Close Explorer" 📋</code> <code class="copy-chip" onclick="copyText('close terminal')">"Close Terminal" 📋</code></td>
+                        <td>Closes File Explorer or Terminal window</td>
+                    </tr>
+                    <tr data-cat="voice">
+                        <td><span class="badge-tag closer">App Exit</span></td>
+                        <td><code class="copy-chip" onclick="copyText('close vscode')">"Close VS Code" 📋</code> <code class="copy-chip" onclick="copyText('close app')">"Close App" 📋</code></td>
+                        <td>Closes VS Code or generic active window (Alt+F4)</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <h3 style="color:#1abc9c; font-family:'Orbitron',sans-serif; font-size:14px; margin-bottom:10px;">B. Return, Navigation & System Shortcuts</h3>
+        <div class="table-responsive">
+            <table class="cyber-table">
+                <thead>
+                    <tr>
+                        <th>Category</th>
+                        <th>Voice Trigger Phrase (Click to Copy)</th>
+                        <th>Action & Functionality</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr data-cat="voice">
+                        <td><span class="badge-tag return">Return</span></td>
+                        <td><code class="copy-chip" onclick="copyText('come back')">"Come Back" 📋</code> <code class="copy-chip" onclick="copyText('switch back')">"Switch Back" 📋</code></td>
+                        <td>Switches focus back to previous window / NOVA dashboard</td>
+                    </tr>
+                    <tr data-cat="voice">
+                        <td><span class="badge-tag return">Return</span></td>
+                        <td><code class="copy-chip" onclick="copyText('return to nova')">"Return to NOVA" 📋</code> <code class="copy-chip" onclick="copyText('open dashboard')">"Open Dashboard" 📋</code></td>
+                        <td>Focuses back onto NOVA Control Center dashboard</td>
+                    </tr>
+                    <tr data-cat="voice">
+                        <td><span class="badge-tag system">System</span></td>
+                        <td><code class="copy-chip" onclick="copyText('volume up')">"Volume Up" 📋</code> <code class="copy-chip" onclick="copyText('volume down')">"Volume Down" 📋</code> <code class="copy-chip" onclick="copyText('mute')">"Mute" 📋</code></td>
+                        <td>Adjusts system sound volume or toggles audio mute</td>
+                    </tr>
+                    <tr data-cat="voice">
+                        <td><span class="badge-tag system">System</span></td>
+                        <td><code class="copy-chip" onclick="copyText('take screenshot')">"Take Screenshot" 📋</code> <code class="copy-chip" onclick="copyText('lock pc')">"Lock PC" 📋</code></td>
+                        <td>Triggers Windows screenshot snip or locks workstation</td>
+                    </tr>
+                    <tr data-cat="voice">
+                        <td><span class="badge-tag system">Editing</span></td>
+                        <td><code class="copy-chip" onclick="copyText('copy')">"Copy" 📋</code> <code class="copy-chip" onclick="copyText('paste')">"Paste" 📋</code> <code class="copy-chip" onclick="copyText('undo')">"Undo" 📋</code></td>
+                        <td>Clipboard editing actions (Ctrl+C, Ctrl+V, Ctrl+Z)</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- MODULE 2: EYE MOVEMENT MOUSE CONTROL -->
+    <div class="guide-card" data-category="eye">
+        <div class="card-header">
+            <span class="card-icon">👁</span>
+            <h2 class="card-title">2. Eye-Movement Mouse Control Module</h2>
+        </div>
+        <p class="card-desc">
+            <strong>How it Operates:</strong> Uses webcam MediaPipe Iris pupil gaze tracking to map your eye gaze direction directly to screen resolution coordinates. Clicks are triggered by natural eye blinks.
+        </p>
+        <div class="table-responsive">
+            <table class="cyber-table">
+                <thead>
+                    <tr><th>Function</th><th>Operation & Gesture</th><th>Description</th></tr>
+                </thead>
+                <tbody>
+                    <tr data-cat="eye">
+                        <td><span class="badge-tag system">Cursor</span></td>
+                        <td>Gaze towards screen area</td>
+                        <td>Shifts mouse cursor position smoothly based on pupil center direction.</td>
+                    </tr>
+                    <tr data-cat="eye">
+                        <td><span class="badge-tag system">Left Click</span></td>
+                        <td>Single Deliberate Blink (~0.3s)</td>
+                        <td>Performs a standard left-click action at current cursor coordinates.</td>
+                    </tr>
+                    <tr data-cat="eye">
+                        <td><span class="badge-tag system">Edge Drift</span></td>
+                        <td>Gaze near screen borders</td>
+                        <td>Drifts cursor smoothly towards screen edge when looking far left/right.</td>
+                    </tr>
+                    <tr data-cat="eye">
+                        <td><span class="badge-tag system">Auto Safety</span></td>
+                        <td>Leave webcam frame (>3 sec)</td>
+                        <td>Safety auto-stop disengages mouse pointer when face leaves camera.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- MODULE 3: HAND GESTURE CONTROL -->
+    <div class="guide-card" data-category="hand">
+        <div class="card-header">
+            <span class="card-icon">✋</span>
+            <h2 class="card-title">3. Hand Gesture Control Module</h2>
+        </div>
+        <p class="card-desc">
+            <strong>How it Operates:</strong> Tracks 21 3D hand landmarks in your webcam feed. Adjust pointer gain and smoothing sliders on the Hand Control page to customize cursor speed.
+        </p>
+        <div class="table-responsive">
+            <table class="cyber-table">
+                <thead>
+                    <tr><th>Gesture</th><th>Action Performed</th><th>Description</th></tr>
+                </thead>
+                <tbody>
+                    <tr data-cat="hand">
+                        <td><span class="badge-tag launcher">Pointer</span></td>
+                        <td><code>Index Finger Pointing</code></td>
+                        <td>Moves mouse pointer across desktop in real-time</td>
+                    </tr>
+                    <tr data-cat="hand">
+                        <td><span class="badge-tag launcher">Left Click</span></td>
+                        <td><code>Index + Thumb Pinch</code></td>
+                        <td>Executes Left Click or Hold & Drag objects</td>
+                    </tr>
+                    <tr data-cat="hand">
+                        <td><span class="badge-tag launcher">Right Click</span></td>
+                        <td><code>Ring Finger + Thumb Pinch</code></td>
+                        <td>Executes Right Click context menu</td>
+                    </tr>
+                    <tr data-cat="hand">
+                        <td><span class="badge-tag launcher">Scroll</span></td>
+                        <td><code>Pinky + Thumb Pinch (Slide Vertically)</code></td>
+                        <td>Scrolls active page Up or Down smoothly</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- MODULE 4: HEAD MOVEMENT CONTROL -->
+    <div class="guide-card" data-category="head">
+        <div class="card-header">
+            <span class="card-icon">👤</span>
+            <h2 class="card-title">4. Head Movement Control Module</h2>
+        </div>
+        <p class="card-desc">
+            <strong>How it Operates:</strong> Tracks nose tip orientation and head pitch/yaw tilt relative to screen center.
+        </p>
+        <div class="table-responsive">
+            <table class="cyber-table">
+                <thead>
+                    <tr><th>Movement / Gesture</th><th>Action Performed</th></tr>
+                </thead>
+                <tbody>
+                    <tr data-cat="head"><td><code>Head Nudge / Tilt</code></td><td>Moves mouse cursor in direction of head tilt</td></tr>
+                    <tr data-cat="head"><td><code>Left Eye Blink</code></td><td>Executes Left Mouse Click</td></tr>
+                    <tr data-cat="head"><td><code>Right Eye Blink</code></td><td>Executes Right Mouse Click</td></tr>
+                    <tr data-cat="head"><td><code>Head Pitch Shift (Up/Down)</code></td><td>Scrolls page up or down vertically</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- MODULE 5: FACIAL EXPRESSIONS -->
+    <div class="guide-card" data-category="facial">
+        <div class="card-header">
+            <span class="card-icon">😊</span>
+            <h2 class="card-title">5. Facial Expression Keyboard Module</h2>
+        </div>
+        <p class="card-desc">
+            <strong>How it Operates:</strong> Uses MediaPipe Face Mesh blendshape metrics to trigger mouse & keyboard events based on facial expressions.
+        </p>
+        <div class="table-responsive">
+            <table class="cyber-table">
+                <thead>
+                    <tr><th>Facial Expression</th><th>Action Performed</th></tr>
+                </thead>
+                <tbody>
+                    <tr data-cat="facial"><td><code>Smile Expression</code></td><td>Triggers Left Click action</td></tr>
+                    <tr data-cat="facial"><td><code>Eyebrow Raise</code></td><td>Triggers Right Click action</td></tr>
+                    <tr data-cat="facial"><td><code>Mouth Open</code></td><td>Scrolls page up vertically</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- MODULE 6: SETTINGS & RESET SYSTEM -->
+    <div class="guide-card" data-category="settings">
+        <div class="card-header">
+            <span class="card-icon">⚙</span>
+            <h2 class="card-title">6. System Settings & Cache Reset</h2>
+        </div>
+        <p class="card-desc">
+            <strong>How it Operates:</strong> Manage hardware input devices, tune sensitivity thresholds, and clear memory logs.
+        </p>
+        <div class="table-responsive">
+            <table class="cyber-table">
+                <thead>
+                    <tr><th>Setting / Utility</th><th>Function & Usage</th></tr>
+                </thead>
+                <tbody>
+                    <tr data-cat="settings">
+                        <td><span class="badge-tag system">Input Mic</span></td>
+                        <td>Select specific microphone index <code>[0], [1]...</code> from dropdown menu for voice capture</td>
+                    </tr>
+                    <tr data-cat="settings">
+                        <td><span class="badge-tag system">Sensitivity</span></td>
+                        <td>Adjust confidence threshold slider (0.30 - 0.95) to tune voice recognition strictness</td>
+                    </tr>
+                    <tr data-cat="settings">
+                        <td><span class="badge-tag system">Reset System</span></td>
+                        <td>Click <strong>"Reset Memory Cache"</strong> on Settings page to flush Django cache & logs (`/reset_system/`)</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- ACTION BUTTONS -->
+    <div style="display:flex; gap:15px; flex-wrap:wrap; margin-top:20px;">
+        <a href="{% url 'voice_control' %}" class="btn-outline">🎤 Start Voice Control</a>
+        <a href="{% url 'eye_control' %}" class="btn-outline">👁 Start Eye Control</a>
+        <a href="{% url 'dashboard_page' %}" class="btn-outline">🎛 Back to Dashboard</a>
+    </div>
+
+</div>
+
+</main>
+</div>
+
+<!-- TOAST TOOLTIP -->
+<div id="toast">Copied phrase to clipboard!</div>
+
+<script>
+function filterCommands() {
+    let input = document.getElementById('commandSearch').value.toLowerCase();
+    let rows = document.querySelectorAll('.cyber-table tbody tr');
+    let visibleCount = 0;
+
+    rows.forEach(row => {
+        let text = row.innerText.toLowerCase();
+        if (text.includes(input)) {
+            row.style.display = '';
+            visibleCount++;
+        } else {
+            row.style.display = 'none';
+        }
+    });
+
+    let badge = document.getElementById('matchCounter');
+    if (badge) {
+        badge.innerText = input ? `${visibleCount} Functions Found` : `6 Modules Active`;
+    }
+}
+
+function filterCategory(category, element) {
+    let buttons = document.querySelectorAll('.tab-btn');
+    buttons.forEach(btn => btn.classList.remove('active'));
+    element.classList.add('active');
+
+    let cards = document.querySelectorAll('.guide-card');
+    let rows = document.querySelectorAll('.cyber-table tbody tr');
+
+    cards.forEach(card => {
+        let cardCat = card.getAttribute('data-category');
+        if (category === 'all' || cardCat === category) {
+            card.style.display = 'block';
+        } else {
+            card.style.display = 'none';
+        }
+    });
+
+    rows.forEach(row => {
+        let rowCat = row.getAttribute('data-cat');
+        if (category === 'all' || rowCat === category) {
+            row.style.display = '';
+        } else {
+            row.style.display = 'none';
+        }
+    });
+}
+
+function copyText(text) {
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(() => showToast(`Copied "${text}" to clipboard!`));
+    } else {
+        showToast(`Copied "${text}"`);
+    }
+}
+
+function showToast(msg) {
+    let toast = document.getElementById('toast');
+    if (toast) {
+        toast.innerText = msg;
+        toast.style.display = 'block';
+        setTimeout(() => {
+            toast.style.display = 'none';
+        }, 2200);
+    }
+}
+</script>
+</body>
+</html>

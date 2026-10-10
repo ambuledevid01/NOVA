@@ -1,0 +1,54 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Login | NOVA - Neuro Optimized Vital Analysis</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="{% static 'css/login.css' %}">
+</head>
+
+<body>
+
+<div class="login-container">
+
+    <div class="login-box">
+        <h1 class="logo">NOVA</h1>
+        <p class="tagline">Neuro Optimized Vital Analysis</p>
+        
+        {% if messages %}
+           {% for message in messages %}
+                <div class="alert" role="alert">{{message}}</div>
+           {% endfor %}
+        {% endif %}
+
+        <br> <br> 
+        <form method="Post">
+            {% csrf_token %}
+            <div class="input-group">
+                <input type="text" name='username' required>
+                <label>Username</label>
+            </div>
+
+            <div class="input-group">
+                <input type="password" name='password' required>
+                <label>Password</label>
+            </div>
+
+            <p class="register-text">
+                Don't have an account?
+                <a href='/register/'>Register here</a>
+            </p>
+
+            <button type="submit" class="login-btn">Login</button>
+
+        </form>
+    </div>
+
+</div>
+
+</body>
+</html>

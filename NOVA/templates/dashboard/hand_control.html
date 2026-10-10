@@ -1,0 +1,356 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NOVA | Hand Gesture Control</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{% static 'css/dashboard/eye_control.css' %}">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="{% static 'js/three_bg/hand_bg.js' %}"></script>
+<style>
+  /* ── Calibration & Settings panel extras ────────────────────── */
+  .settings-panel {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.10);
+    border-radius: 14px;
+    padding: 18px 20px;
+    margin-top: 16px;
+  }
+  .settings-panel h3 {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.78rem;
+    letter-spacing: 2px;
+    color: #a0cfff;
+    margin: 0 0 14px;
+    text-transform: uppercase;
+  }
+  .slider-group {
+    margin-bottom: 14px;
+  }
+  .slider-group label {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.82rem;
+    color: #ccc;
+    margin-bottom: 5px;
+  }
+  .slider-group label span {
+    color: #7dd3fc;
+    font-weight: 600;
+    min-width: 36px;
+    text-align: right;
+  }
+  .slider-group input[type=range] {
+    width: 100%;
+    accent-color: #38bdf8;
+    cursor: pointer;
+  }
+  /* calibration steps */
+  .calib-steps {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-top: 10px;
+  }
+  .calib-steps button {
+    flex: 1;
+    min-width: 100px;
+    padding: 9px 10px;
+    border-radius: 8px;
+    border: 1px solid rgba(255,255,255,0.15);
+    font-size: 0.78rem;
+    font-family: 'Poppins', sans-serif;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  #btnCalibStart  { background: rgba(56,189,248,0.15); color: #7dd3fc; }
+  #btnCalibFinish { background: rgba(74,222,128,0.15); color: #86efac; }
+  #btnCalibReset  { background: rgba(248,113,113,0.15); color: #fca5a5; }
+  .calib-steps button:hover { filter: brightness(1.3); transform: scale(1.03); }
+  .calib-steps button:disabled { opacity: 0.35; cursor: default; transform: none; }
+
+  #calibStatus {
+    margin-top: 10px;
+    font-size: 0.78rem;
+    min-height: 20px;
+    padding: 6px 10px;
+    border-radius: 6px;
+    background: rgba(255,255,255,0.04);
+    color: #a0cfff;
+  }
+  #calibStatus.error  { color: #fca5a5; }
+  #calibStatus.ok     { color: #86efac; }
+  #calibStatus.active { color: #fde68a; animation: pulse 1s infinite alternate; }
+  @keyframes pulse { from { opacity: 1 } to { opacity: 0.5 } }
+
+  .tag-row {
+    display: flex; gap: 6px; flex-wrap: wrap; margin-top: 12px;
+  }
+  .tag {
+    font-size: 0.7rem; padding: 3px 10px; border-radius: 20px;
+    border: 1px solid rgba(255,255,255,0.15); color: #ccc;
+  }
+  .tag.calib-on { border-color: #38bdf8; color: #7dd3fc; background: rgba(56,189,248,0.12); }
+</style>
+</head>
+
+<body>
+<div class="dashboard-container">
+
+<aside class="sidebar">
+  <div class="logo">NOVA Control Center</div>
+  <p class="sidebar-desc">Navigate to get started or control your PC hands-free.</p>
+  <div class="nav-title">Navigation</div>
+  <ul class="nav-list">
+    <li><a href="{% url 'dashboard_page' %}">🏠 Home</a></li>
+    <li><a href="{% url 'user_guide' %}">📘 User Guide</a></li>
+    <li><a href="{% url 'eye_control' %}">👁 Eye-Movement Mouse Control</a></li>
+    <li><a href="{% url 'facial_exp' %}">😊 Facial Expression → Keyboard</a></li>
+    <li><a href="{% url 'voice_control' %}">🎤 Voice Control</a></li>
+    <li class="active"><a href="{% url 'hand_control' %}">✋ Hand Gesture Control</a></li>
+    <li><a href="{% url 'head_control' %}">👤 Head Movement Control</a></li>
+    <li><a href="{% url 'settings_page' %}">⚙ Settings</a></li>
+    <li><a href="{% url 'about_us' %}">ℹ About Us</a></li>
+  </ul>
+</aside>
+
+<main class="main-content">
+
+  <h1 class="page-title">Hand Gesture Control</h1>
+  <p class="page-subtitle">
+    Index = cursor &amp; left-click/drag &nbsp;·&nbsp; Ring+Thumb = right-click &nbsp;·&nbsp; Thumb+Pinky = scroll
+  </p>
+
+  <div class="feature-wrapper">
+
+    <!-- ── Camera feed ──────────────────────────────────────────── -->
+    <div class="feature-left">
+      <div class="preview-box">
+        <img id="videoFeed"
+             src="{% url 'video_feed' %}"
+             width="100%"
+             style="display:none; border-radius:10px;">
+      </div>
+
+      <div class="tag-row">
+        <span class="tag" id="tagCalib">⬜ Not Calibrated</span>
+        <span class="tag" id="tagGain">Gain: 1.2</span>
+        <span class="tag" id="tagScroll">Scroll: 600</span>
+      </div>
+    </div>
+
+    <!-- ── Controls column ─────────────────────────────────────── -->
+    <div class="feature-right">
+
+      <button class="btn-outline start-btn" id="btnStart" onclick="runWithCountdown(startHand)">▶ Start Control</button>
+      <button class="btn-outline stop-btn"  id="btnStop"  onclick="stopHand()">■ Stop Control</button>
+
+      <!-- Sensitivity sliders -->
+      <div class="settings-panel">
+        <h3>🎚 Sensitivity</h3>
+
+        <div class="slider-group">
+          <label>Pointer Gain (speed) <span id="valGain">1.2</span></label>
+          <input type="range" id="sliderGain" min="0.5" max="3.0" step="0.1" value="1.2"
+                 oninput="onGainChange(this.value)">
+        </div>
+
+        <div class="slider-group">
+          <label>Scroll Speed <span id="valScroll">600</span></label>
+          <input type="range" id="sliderScroll" min="100" max="2000" step="50" value="600"
+                 oninput="onScrollChange(this.value)">
+        </div>
+
+        <div class="slider-group">
+          <label>Smoothing (stability) <span id="valSmooth">0.35</span></label>
+          <input type="range" id="sliderSmooth" min="0.05" max="0.95" step="0.05" value="0.35"
+                 oninput="onSmoothChange(this.value)">
+        </div>
+      </div>
+
+      <!-- Calibration panel -->
+      <div class="settings-panel">
+        <h3>📐 Calibration</h3>
+        <p style="font-size:0.78rem; color:#aaa; margin:0 0 10px;">
+          Move your index finger across your whole comfortable range while calibrating, then click <em>Finish</em>.
+          This maps your hand zone to the full screen for precise control.
+        </p>
+
+        <div class="calib-steps">
+          <button id="btnCalibStart"  onclick="beginCalib()">▶ Start</button>
+          <button id="btnCalibFinish" onclick="finishCalib()" disabled>✔ Finish</button>
+          <button id="btnCalibReset"  onclick="resetCalib()">↺ Reset</button>
+        </div>
+        <div id="calibStatus">Idle – press Start to begin calibration.</div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="log-box" id="logBox">Present your hand to begin…</div>
+
+</main>
+</div>
+
+<!-- ── JavaScript ──────────────────────────────────────────────────────────── -->
+<script>
+/* ── Countdown helper ─────────────────────────────────────────────────── */
+function runWithCountdown(startAction) {
+    let overlay = document.getElementById("countdownOverlay");
+    if (!overlay) {
+        overlay = document.createElement("div");
+        overlay.id = "countdownOverlay";
+        overlay.style.cssText = "display:flex;position:fixed;top:0;left:0;width:100%;height:100%;"
+            + "background:rgba(0,0,0,0.85);color:white;font-size:12rem;"
+            + "font-family:'Orbitron',sans-serif;z-index:10000;"
+            + "justify-content:center;align-items:center;";
+        document.body.appendChild(overlay);
+    }
+    overlay.style.display = "flex";
+    let count = 3;
+    overlay.innerText = count;
+    let timer = setInterval(() => {
+        count--;
+        if (count > 0) { overlay.innerText = count; }
+        else { clearInterval(timer); overlay.style.display = "none"; startAction(); }
+    }, 1000);
+}
+
+/* ── Start / Stop ─────────────────────────────────────────────────────── */
+function startHand() {
+    fetch("{% url 'start_hand' %}")
+        .then(r => r.json())
+        .then(data => {
+            if (data.status === "error") {
+                log("❌ Error: " + data.message);
+                return;
+            }
+            document.getElementById("videoFeed").style.display = "block";
+            log("Hand control started…");
+            // Sync current slider values to backend immediately
+            pushAllSettings();
+        })
+        .catch(err => {
+            log("❌ Server connection error.");
+        });
+}
+
+function stopHand() {
+    fetch("{% url 'stop_hand' %}")
+        .then(r => r.json())
+        .then(() => {
+            log("Hand control stopped.");
+        });
+}
+
+/* ── Settings (sliders) ───────────────────────────────────────────────── */
+let settingsTimer = null;
+
+function onGainChange(v) {
+    document.getElementById("valGain").innerText  = parseFloat(v).toFixed(1);
+    document.getElementById("tagGain").innerText  = "Gain: " + parseFloat(v).toFixed(1);
+    scheduleSettingsPush();
+}
+
+function onScrollChange(v) {
+    document.getElementById("valScroll").innerText = parseInt(v);
+    document.getElementById("tagScroll").innerText = "Scroll: " + parseInt(v);
+    scheduleSettingsPush();
+}
+
+function onSmoothChange(v) {
+    document.getElementById("valSmooth").innerText = parseFloat(v).toFixed(2);
+    scheduleSettingsPush();
+}
+
+/** Debounce – push settings 250 ms after the last slider move. */
+function scheduleSettingsPush() {
+    clearTimeout(settingsTimer);
+    settingsTimer = setTimeout(pushAllSettings, 250);
+}
+
+function pushAllSettings() {
+    const gain   = document.getElementById("sliderGain").value;
+    const scroll = document.getElementById("sliderScroll").value;
+    const smooth = document.getElementById("sliderSmooth").value;
+
+    fetch(`{% url 'hand_set_settings' %}?pointer_gain=${gain}&scroll_gain=${scroll}&smooth_alpha=${smooth}`)
+        .then(r => r.json())
+        .then(d => {
+            if (d.status === "ok") {
+                log(`Settings applied → Gain: ${d.pointer_gain.toFixed(1)}  Scroll: ${d.scroll_gain}  Smooth: ${d.smooth_alpha.toFixed(2)}`);
+            }
+        })
+        .catch(() => {/* backend not yet started – silently ignore */});
+}
+
+/* ── Calibration ──────────────────────────────────────────────────────── */
+function setCalibStatus(msg, cls="") {
+    const el = document.getElementById("calibStatus");
+    el.innerText = msg;
+    el.className = cls;
+}
+
+function beginCalib() {
+    fetch("{% url 'hand_begin_calibration' %}")
+        .then(r => r.json())
+        .then(() => {
+            setCalibStatus("🟡 Calibrating… move your index finger to all corners of your comfortable range.", "active");
+            document.getElementById("btnCalibStart").disabled  = true;
+            document.getElementById("btnCalibFinish").disabled = false;
+            document.getElementById("tagCalib").innerText = "🟡 Calibrating…";
+            document.getElementById("tagCalib").classList.remove("calib-on");
+            log("Calibration started – move your hand around!");
+        });
+}
+
+function finishCalib() {
+    fetch("{% url 'hand_finish_calibration' %}")
+        .then(r => r.json())
+        .then(d => {
+            document.getElementById("btnCalibStart").disabled  = false;
+            document.getElementById("btnCalibFinish").disabled = true;
+            if (d.status === "done") {
+                setCalibStatus(
+                    `✅ Calibrated! Zone: x[${d.x_min}–${(d.x_min+d.x_range).toFixed(2)}]  y[${d.y_min}–${(d.y_min+d.y_range).toFixed(2)}]`,
+                    "ok"
+                );
+                document.getElementById("tagCalib").innerText = "✅ Calibrated";
+                document.getElementById("tagCalib").classList.add("calib-on");
+                log("Calibration finished – pointer zone locked.");
+            } else {
+                setCalibStatus("❌ " + d.message, "error");
+                document.getElementById("tagCalib").innerText = "⬜ Not Calibrated";
+                document.getElementById("tagCalib").classList.remove("calib-on");
+                log("Calibration failed: " + d.message);
+            }
+        });
+}
+
+function resetCalib() {
+    fetch("{% url 'hand_reset_calibration' %}")
+        .then(r => r.json())
+        .then(() => {
+            setCalibStatus("Idle – press Start to begin calibration.");
+            document.getElementById("btnCalibStart").disabled  = false;
+            document.getElementById("btnCalibFinish").disabled = true;
+            document.getElementById("tagCalib").innerText = "⬜ Not Calibrated";
+            document.getElementById("tagCalib").classList.remove("calib-on");
+            log("Calibration reset.");
+        });
+}
+
+/* ── Log helper ───────────────────────────────────────────────────────── */
+function log(msg) {
+    document.getElementById("logBox").innerText = msg;
+}
+
+/* ── Teardown on page leave ───────────────────────────────────────────── */
+window.addEventListener("beforeunload", function () {
+    fetch("{% url 'stop_hand' %}", { keepalive: true });
+});
+</script>
+</body>
+</html>

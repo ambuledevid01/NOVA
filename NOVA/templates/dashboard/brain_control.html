@@ -1,0 +1,138 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NOVA | Brain Signal Control</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{% static 'css/dashboard/brain_control.css' %}">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="{% static 'js/three_bg/brain_bg.js' %}"></script>
+</head>
+
+<body>
+
+<div class="dashboard-container">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+        <div class="logo">NOVA Control Center</div>
+        <p class="sidebar-desc">
+            Navigate to get started or control your PC hands-free.
+        </p>
+
+        <div class="nav-title">Navigation</div>
+
+        <ul class="nav-list">
+            <li><a href="{% url 'home_page' %}">🏠 Home</a></li>
+            <li><a href="{% url 'user_guide' %}">📘 User Guide</a></li>
+            <li><a href="{% url 'eye_control' %}">👁 Eye Control</a></li>
+            <li><a href="{% url 'facial_exp' %}">😊 Facial Control</a></li>
+            <li class="active"><a href="{% url 'brain_control' %}">🧠 Brain Signal Control</a></li>
+            <li><a href="{% url 'voice_control' %}">🎤 Voice Control</a></li>
+            <li><a href="{% url 'hand_control' %}">✋ Hand Gesture Control</a></li>
+            <li><a href="{% url 'head_control' %}">👤 Head Movement Control</a></li>
+            <li><a href="{% url 'settings_page' %}">⚙ Settings</a></li>
+            <li><a href="#">ℹ About</a></li>
+        </ul>
+
+        <div class="quick-tips">
+            <h4>Quick Tips</h4>
+            <ul>
+                <li>Ensure EEG headset is connected</li>
+                <li>Allow access when prompted</li>
+                <li>Adjust sensitivity if needed</li>
+                <li>Check User Guide for detailed instructions</li>
+            </ul>
+        </div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="main-content">
+
+        <h1 class="page-title">Brain Signal → Keyboard/Mouse Control</h1>
+        <p class="page-subtitle">
+            Connect an EEG headset to translate mental commands into input events.
+            This module uses brain-computer interface (BCI) technology to detect neural signals and convert them into computer commands.
+        </p>
+
+        <div class="feature-wrapper">
+
+            <!-- LEFT SIDE -->
+            <div class="feature-left">
+
+                <h3>EEG Signal Status</h3>
+                <div class="status-card">
+                    <strong>EEG Headset Required</strong>
+                    <p>
+                        This feature requires a compatible EEG headset connected via USB or Bluetooth.
+                        Signal visualization will appear here once a device is connected and streaming.
+                    </p>
+                </div>
+
+                <h3>Signal Information</h3>
+                <ul class="signal-info">
+                    <li><strong>Input Device:</strong> EEG Headset (not webcam)</li>
+                    <li><strong>Signal Type:</strong> Brain electrical activity</li>
+                    <li><strong>Control Method:</strong> Mental commands / Motor imagery</li>
+                    <li><strong>Output:</strong> Mouse movement, keyboard input</li>
+                </ul>
+
+            </div>
+
+            <!-- RIGHT SIDE -->
+            <div class="feature-right">
+
+                <h3>Controls</h3>
+
+                <button class="btn-outline start-btn">▶ Start Brain Control</button>
+                <button class="btn-outline stop-btn">■ Stop Brain Control</button>
+
+                <div class="form-group">
+                    <label>EEG Device</label>
+                    <div class="select-box">Not connected</div>
+                </div>
+
+                <div class="form-group">
+                    <label>Signal processing profile</label>
+                    <div class="select-box">Motor Imagery ▼</div>
+                </div>
+
+                <div class="slider-group">
+                    <label>Signal sensitivity <span>0.80</span></label>
+                    <input type="range" min="0.10" max="1.50" step="0.01" value="0.80">
+                    <div class="range-labels">
+                        <span>0.10</span>
+                        <span>1.50</span>
+                    </div>
+                </div>
+
+                <div class="checkbox-group">
+                    <label><input type="checkbox" checked> Enable audio feedback</label>
+                    <label><input type="checkbox" checked> Enable visual feedback</label>
+                </div>
+
+            </div>
+
+        </div>
+
+        <h3 class="logs-title">Activity Logs</h3>
+
+        <div class="activity-box">
+            <div class="status-text">Current Status: Idle</div>
+            <div class="log-line">Waiting for EEG device connection...</div>
+
+            <div class="note-box">
+                Note: This is currently in demo mode.
+                Connect a compatible EEG headset (e.g., OpenBCI, Muse, NeuroSky) to enable real brain signal control.
+            </div>
+        </div>
+
+    </main>
+
+</div>
+
+</body>
+</html>

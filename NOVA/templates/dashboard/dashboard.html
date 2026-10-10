@@ -1,0 +1,122 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NOVA | Control Center</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{% static 'css/dashboard/dashboard.css' %}">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="{% static 'js/three_bg/dashboard_bg.js' %}"></script>
+</head>
+
+<body>
+
+<div class="dashboard-container">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar" id="sidebar">
+        <div class="logo">NOVA</div>
+        <p class="sidebar-desc">Navigate to get started or control your PC hands-free.</p>
+
+        <div class="nav-title">Navigation</div>
+        <nav>
+            <ul class="nav-list">
+                <li><a href="{% url 'dashboard_page' %}">🏠 Home</a></li>
+                <li><a href="{% url 'user_guide' %}">📘 User Guide</a></li>
+                <li><a href="{% url 'eye_control' %}">👁 Eye Control</a></li>
+                <li><a href="{% url 'facial_exp' %}">😊 Facial Control</a></li>
+                <li><a href="{% url 'voice_control' %}">🎤 Voice Control</a></li>
+                <li><a href="{% url 'hand_control' %}">✋ Gesture Control</a></li>
+                <li><a href="{% url 'head_control' %}">👤 Head Movement Control</a></li>
+                <li><a href="{% url 'settings_page' %}">⚙ Settings</a></li>
+                <li><a href="{% url 'about_us' %}">ℹ About Us</a></li>
+                <li><a href="{% url 'logout_page' %}">🚪 Logout</a></li>
+            </ul>
+        </nav>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="main-content">
+
+        <!-- Toggle Button -->
+        <div class="top-bar">
+            <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
+        </div>
+
+        <header class="top-header">
+            <h1>Welcome to NOVA</h1>
+            <p>Hands-Free Computer Interaction System</p>
+        </header>
+
+        <!-- QUICK STATS -->
+        <section class="stats">
+            <div class="stat-card">
+                <h3>System Status</h3>
+                <span class="status online">Online</span>
+            </div>
+
+            <div class="stat-card">
+                <h3>Active Mode</h3>
+                <span id="activeMode">None</span>
+            </div>
+
+            <div class="stat-card">
+                <h3>Camera</h3>
+                <span id="cameraStatus">Disconnected</span>
+            </div>
+        </section>
+
+        <!-- CONTROL ACTIONS -->
+        <section class="control-actions">
+            <h2>Available Control Modes</h2>
+
+            <div class="control-grid">
+
+                <div class="control-box" onclick="activateMode('Eye Control', '{% url 'eye_control' %}')">
+                    <h3>👁 Eye Movement</h3>
+                    <p>Control cursor using eye tracking.</p>
+                    <button onclick="event.stopPropagation(); activateMode('Eye Control', '{% url 'eye_control' %}')">Start</button>
+                </div>
+
+                <div class="control-box" onclick="activateMode('Facial Control', '{% url 'facial_exp' %}')">
+                    <h3>😊 Facial Control</h3>
+                    <p>Trigger keyboard shortcuts using expressions.</p>
+                    <button onclick="event.stopPropagation(); activateMode('Facial Control', '{% url 'facial_exp' %}')">Start</button>
+                </div>
+
+                <div class="control-box" title="Coming soon — requires EEG headset" style="opacity:0.55; cursor:not-allowed;">
+                    <h3>🧠 Brain Signal</h3>
+                    <p>EEG based mental command interface.</p>
+                    <button disabled style="opacity:0.5;cursor:not-allowed;">Coming Soon</button>
+                </div>
+
+                <div class="control-box" onclick="activateMode('Voice Control', '{% url 'voice_control' %}')">
+                    <h3>🎤 Voice Command</h3>
+                    <p>Control PC using voice commands.</p>
+                    <button onclick="event.stopPropagation(); activateMode('Voice Control', '{% url 'voice_control' %}')">Start</button>
+                </div>
+
+                <div class="control-box" onclick="activateMode('Gesture Control', '{% url 'hand_control' %}')">
+                    <h3>✋ Hand Gesture</h3>
+                    <p>Use hand gestures for interaction.</p>
+                    <button onclick="event.stopPropagation(); activateMode('Gesture Control', '{% url 'hand_control' %}')">Start</button>
+                </div>
+
+                <div class="control-box" onclick="activateMode('Head Control', '{% url 'head_control' %}')">
+                    <h3>👤 Head Movement</h3>
+                    <p>Move cursor with head tracking.</p>
+                    <button onclick="event.stopPropagation(); activateMode('Head Control', '{% url 'head_control' %}')">Start</button>
+                </div>
+
+            </div>
+        </section>
+
+    </main>
+</div>
+
+<script src="{% static 'js/dashboard.js' %}"></script>
+</body>
+</html>

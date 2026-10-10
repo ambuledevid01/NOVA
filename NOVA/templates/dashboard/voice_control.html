@@ -1,0 +1,524 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NOVA | Voice Command Control</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{% static 'css/dashboard/brain_control.css' %}">
+<link rel="stylesheet" href="{% static 'css/dashboard/voice_control.css' %}">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="{% static 'js/three_bg/voice_bg.js' %}"></script>
+<style>
+.live-stt-container {
+    background: rgba(26, 188, 156, 0.08);
+    border: 2px solid #1abc9c;
+    border-radius: 12px;
+    padding: 16px 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 0 25px rgba(26, 188, 156, 0.2);
+    transition: all 0.3s ease;
+}
+.live-stt-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+    border-bottom: 1px solid rgba(26, 188, 156, 0.2);
+    padding-bottom: 8px;
+}
+.live-stt-title {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.9rem;
+    color: #1abc9c;
+    letter-spacing: 1.5px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.stt-badge {
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    background: #2b2b3d;
+    color: #888;
+    font-family: 'Orbitron', sans-serif;
+    letter-spacing: 1px;
+    transition: all 0.3s ease;
+}
+.stt-badge.active {
+    background: rgba(26, 188, 156, 0.3);
+    color: #00ffcc;
+    border: 1px solid #1abc9c;
+    box-shadow: 0 0 10px rgba(0, 255, 204, 0.3);
+}
+.stt-badge.executing {
+    background: rgba(241, 196, 15, 0.3);
+    color: #f1c40f;
+    border: 1px solid #f1c40f;
+}
+.live-stt-box {
+    font-family: 'Poppins', sans-serif;
+    font-size: 1.2rem;
+    min-height: 54px;
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    background: rgba(15, 15, 23, 0.6);
+    border-radius: 8px;
+    padding: 10px 15px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+}
+.stt-interim {
+    color: #1abc9c;
+    font-style: italic;
+}
+.stt-final {
+    color: #ffffff;
+    font-weight: 600;
+}
+.last-action-badge {
+    margin-top: 10px;
+    font-size: 0.9rem;
+    font-family: 'Poppins', sans-serif;
+    min-height: 24px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+</style>
+</head>
+
+<body>
+<div class="dashboard-container">
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+    <div class="logo">NOVA Control Center</div>
+    <p class="sidebar-desc">
+        Navigate to get started or control your PC hands-free.
+    </p>
+
+    <div class="nav-title">Navigation</div>
+
+    <ul class="nav-list">
+        <li><a href="{% url 'home_page' %}">🏠 Home</a></li>
+        <li><a href="{% url 'user_guide' %}">📘 User Guide</a></li>
+        <li><a href="{% url 'eye_control' %}">👁 Eye Control</a></li>
+        <li><a href="{% url 'facial_exp' %}">😊 Facial Control</a></li>
+        <li class="active"><a href="{% url 'voice_control' %}">🎤 Voice Command Control</a></li>
+        <li><a href="{% url 'hand_control' %}">✋ Hand Gesture Control</a></li>
+        <li><a href="{% url 'head_control' %}">👤 Head Movement Control</a></li>
+        <li><a href="{% url 'settings_page' %}">⚙ Settings</a></li>
+        <li><a href="{% url 'about_us' %}">ℹ About Us</a></li>
+    </ul>
+
+    <div class="quick-tips">
+        <h4>Quick Tips</h4>
+        <ul>
+            <li>Use a headset mic for best accuracy</li>
+            <li>Pause briefly between commands</li>
+            <li>Speak clearly and at normal volume</li>
+        </ul>
+    </div>
+</aside>
+
+<!-- MAIN CONTENT -->
+<main class="main-content">
+
+<h1 class="page-title">Voice Command Control</h1>
+<p class="page-subtitle">
+Speak natural phrases like "Open browser", "Scroll down", or "Open notepad".
+Live speech is rendered directly on screen as you speak and executed instantly.
+</p>
+
+<div class="feature-wrapper">
+
+<div class="feature-left">
+
+<button class="btn-outline start-btn" onclick="runWithCountdown(startVoice)">▶ Start Listening</button>
+<button class="btn-outline stop-btn" onclick="stopVoice()">■ Stop Listening</button>
+
+<div class="slider-group">
+<label>Input Device (Headset/Mic) <span></span></label>
+<select id="micSelect" style="width:100%; border:1px solid #1abc9c; background:#1e1e2d; color:#fff; padding:8px; border-radius:5px; font-family:'Orbitron', sans-serif; cursor:pointer;" title="Select your microphone"></select>
+</div>
+
+<div class="slider-group">
+<label>Command confidence threshold <span>0.60</span></label>
+<input type="range" min="0.30" max="0.95" step="0.01" value="0.60">
+</div>
+
+<div class="checkbox-group">
+<label><input type="checkbox" id="audioFeedback" checked> Play audio feedback</label>
+</div>
+
+</div>
+
+<div class="feature-right">
+
+<!-- LIVE SPEECH TO TEXT ON SCREEN BOX -->
+<div class="live-stt-container" id="liveSttContainer">
+    <div class="live-stt-header">
+        <span class="live-stt-title">
+            🎙 LIVE SPEECH TO TEXT ON SCREEN
+        </span>
+        <span id="sttStatusBadge" class="stt-badge">OFFLINE</span>
+    </div>
+    <div id="liveSttDisplay" class="live-stt-box">
+        <span style="color: #666; font-style: italic;">Press "Start Listening" and speak... Spoken text will appear here live on screen.</span>
+    </div>
+    <div id="lastActionBadge" class="last-action-badge"></div>
+</div>
+
+<h3>Activity & Command Log</h3>
+<div id="transcriptBox" class="log-line" style="height: 140px; overflow-y: auto;">Say something to begin...</div>
+<br>
+<canvas id="soundWave" width="400" height="80" style="width:100%; height:80px; background:#1b1b28; border-radius:10px; border:1px solid #333;"></canvas>
+
+<div class="note-box" style="margin-top: 15px;">
+Logs refresh automatically while listening.
+</div>
+
+</div>
+
+</div>
+
+</main>
+</div>
+</body>
+<script>
+function runWithCountdown(startAction) {
+    let countdownOverlay = document.getElementById("countdownOverlay");
+    if (!countdownOverlay) {
+        countdownOverlay = document.createElement("div");
+        countdownOverlay.id = "countdownOverlay";
+        countdownOverlay.style.cssText = "display:flex; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); color:white; font-size:12rem; font-family:'Orbitron', sans-serif; z-index:10000; justify-content:center; align-items:center;";
+        document.body.appendChild(countdownOverlay);
+    }
+    countdownOverlay.style.display = "flex";
+    let count = 3;
+    countdownOverlay.innerText = count;
+    let timer = setInterval(() => {
+        count--;
+        if (count > 0) {
+            countdownOverlay.innerText = count;
+        } else {
+            clearInterval(timer);
+            countdownOverlay.style.display = "none";
+            startAction();
+        }
+    }, 1000);
+}
+
+let poller = null;
+let isListening = false;
+
+// Web Speech API
+let recognition = null;
+let lastProcessedText = "";
+
+// Audio Visualizer states
+let audioCtx = null;
+let analyzer = null;
+let localStream = null;
+let waveReq = null;
+
+window.onload = () => {
+    fetch("{% url 'list_microphones' %}")
+        .then(res => res.json())
+        .then(data => {
+            const select = document.getElementById("micSelect");
+            if (data.microphones && Array.isArray(data.microphones)) {
+                data.microphones.forEach((mic, index) => {
+                    let opt = document.createElement("option");
+                    opt.value = index;
+                    opt.text = `[${index}] ${mic}`;
+                    select.appendChild(opt);
+                });
+            }
+        });
+        
+    initBrowserSpeechRecognition();
+};
+
+function initBrowserSpeechRecognition() {
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (SpeechRecognition) {
+        recognition = new SpeechRecognition();
+        recognition.continuous = true;
+        recognition.interimResults = true;
+        recognition.lang = 'en-US';
+
+        recognition.onstart = function() {
+            let badge = document.getElementById("sttStatusBadge");
+            badge.innerText = "LISTENING LIVE";
+            badge.className = "stt-badge active";
+        };
+
+        recognition.onresult = function(event) {
+            let interimTranscript = '';
+            let finalTranscript = '';
+
+            for (let i = event.resultIndex; i < event.results.length; ++i) {
+                if (event.results[i].isFinal) {
+                    finalTranscript += event.results[i][0].transcript;
+                } else {
+                    interimTranscript += event.results[i][0].transcript;
+                }
+            }
+
+            let display = document.getElementById("liveSttDisplay");
+
+            if (interimTranscript) {
+                display.innerHTML = `<span class="stt-interim">“… ${escapeHtml(interimTranscript)}”</span>`;
+            }
+
+            if (finalTranscript) {
+                let cleanText = finalTranscript.trim();
+                if (cleanText && cleanText !== lastProcessedText) {
+                    lastProcessedText = cleanText;
+                    display.innerHTML = `<span class="stt-final">“${escapeHtml(cleanText)}”</span>`;
+                    executeVoiceCommand(cleanText);
+                }
+            }
+        };
+
+        recognition.onerror = function(event) {
+            console.warn("Browser speech recognition error:", event.error);
+            if (event.error === 'not-allowed') {
+                let display = document.getElementById("liveSttDisplay");
+                display.innerHTML = `<span style="color:#e74c3c;">Microphone permission blocked in browser.</span>`;
+            }
+        };
+
+        recognition.onend = function() {
+            if (isListening) {
+                // Keep listening continuously while active
+                try {
+                    recognition.start();
+                } catch(e) {}
+            } else {
+                let badge = document.getElementById("sttStatusBadge");
+                badge.innerText = "OFFLINE";
+                badge.className = "stt-badge";
+            }
+        };
+    } else {
+        let display = document.getElementById("liveSttDisplay");
+        display.innerHTML = `<span style="color:#f1c40f;">Web Speech API not supported in this browser — using backend mic fallback.</span>`;
+    }
+}
+
+function escapeHtml(text) {
+    return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+}
+
+function executeVoiceCommand(text) {
+    let badge = document.getElementById("sttStatusBadge");
+    badge.innerText = "EXECUTING...";
+    badge.className = "stt-badge executing";
+
+    fetch(`{% url 'execute_voice_command' %}?text=${encodeURIComponent(text)}`)
+        .then(res => res.json())
+        .then(data => {
+            let actionBadge = document.getElementById("lastActionBadge");
+            if (data.status === "executed") {
+                actionBadge.innerHTML = `<span style="color: #00ffcc; font-weight: 600;">⚡ Executed: ${escapeHtml(data.label)}</span>`;
+                playFeedbackSound();
+            } else if (data.status === "no_match") {
+                actionBadge.innerHTML = `<span style="color: #aaa; font-style: italic;">💬 Heard: "${escapeHtml(text)}" (no command matched)</span>`;
+            } else if (data.status === "error") {
+                actionBadge.innerHTML = `<span style="color: #e74c3c;">⚠ ${escapeHtml(data.message)}</span>`;
+            }
+            
+            fetchLogs();
+            
+            setTimeout(() => {
+                if (isListening) {
+                    badge.innerText = "LISTENING LIVE";
+                    badge.className = "stt-badge active";
+                }
+            }, 1000);
+        })
+        .catch(err => {
+            console.error("Command execution error:", err);
+        });
+}
+
+function playFeedbackSound() {
+    const feedbackCheck = document.getElementById("audioFeedback");
+    if (feedbackCheck && feedbackCheck.checked) {
+        try {
+            const ctx = new (window.AudioContext || window.webkitAudioContext)();
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(587.33, ctx.currentTime); // D5
+            osc.frequency.exponentialRampToValueAtTime(880, ctx.currentTime + 0.15); // A5
+            gain.gain.setValueAtTime(0.15, ctx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.15);
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            osc.start();
+            osc.stop(ctx.currentTime + 0.15);
+        } catch(e) {}
+    }
+}
+
+function startLocalVisualizer() {
+    if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+        navigator.mediaDevices.getUserMedia({ audio: true }).then(stream => {
+            localStream = stream;
+            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            analyzer = audioCtx.createAnalyser();
+            let source = audioCtx.createMediaStreamSource(stream);
+            source.connect(analyzer);
+            analyzer.fftSize = 256;
+            let bufferLength = analyzer.frequencyBinCount;
+            let dataArray = new Uint8Array(bufferLength);
+            
+            let canvas = document.getElementById("soundWave");
+            let canvasCtx = canvas.getContext("2d");
+            
+            canvas.width = canvas.offsetWidth;
+            canvas.height = canvas.offsetHeight;
+            
+            function draw() {
+                waveReq = requestAnimationFrame(draw);
+                analyzer.getByteTimeDomainData(dataArray);
+                
+                canvasCtx.fillStyle = '#1b1b28';
+                canvasCtx.fillRect(0, 0, canvas.width, canvas.height);
+                
+                canvasCtx.lineWidth = 2;
+                canvasCtx.strokeStyle = '#1abc9c';
+                canvasCtx.beginPath();
+                
+                let sliceWidth = canvas.width * 1.0 / bufferLength;
+                let x = 0;
+                
+                for(let i = 0; i < bufferLength; i++) {
+                    let v = dataArray[i] / 128.0;
+                    let y = v * (canvas.height / 2);
+
+                    if(i === 0) {
+                        canvasCtx.moveTo(x, y);
+                    } else {
+                        canvasCtx.lineTo(x, y);
+                    }
+                    x += sliceWidth;
+                }
+                canvasCtx.lineTo(canvas.width, canvas.height/2);
+                canvasCtx.stroke();
+            }
+            draw();
+        }).catch(err => {
+            console.log("Microphone visualizer blocked or error:", err);
+            let canvas = document.getElementById("soundWave");
+            let canvasCtx = canvas.getContext("2d");
+            canvasCtx.fillStyle = '#1b1b28';
+            canvasCtx.fillRect(0, 0, canvas.width, canvas.height);
+            canvasCtx.fillStyle = '#e74c3c';
+            canvasCtx.fillText("Allow mic access for live visualizer.", 10, 40);
+        });
+    }
+}
+
+function stopLocalVisualizer() {
+    if (waveReq) cancelAnimationFrame(waveReq);
+    if (localStream) {
+        localStream.getTracks().forEach(track => track.stop());
+    }
+    if (audioCtx) {
+        audioCtx.close();
+    }
+    let canvas = document.getElementById("soundWave");
+    if(canvas) {
+        let canvasCtx = canvas.getContext("2d");
+        canvasCtx.fillStyle = '#1b1b28';
+        canvasCtx.fillRect(0, 0, canvas.width, canvas.height);
+        
+        canvasCtx.fillStyle = '#666';
+        canvasCtx.strokeStyle = '#666';
+        canvasCtx.beginPath();
+        canvasCtx.moveTo(0, canvas.height / 2);
+        canvasCtx.lineTo(canvas.width, canvas.height / 2);
+        canvasCtx.stroke();
+    }
+}
+
+function startVoice() {
+    isListening = true;
+    let select = document.getElementById("micSelect");
+    let micIndex = select.value ? select.value : "";
+    
+    // Start Browser Web Speech Recognition
+    if (recognition) {
+        try {
+            recognition.start();
+        } catch(e) {}
+    }
+
+    // Start Backend Listener & Visualizer
+    fetch(`{% url 'start_voice' %}?mic_index=${micIndex}`)
+        .then(res => res.json())
+        .then(data => {
+            if (!poller) {
+                poller = setInterval(fetchLogs, 1000);
+            }
+            startLocalVisualizer();
+        });
+
+    let display = document.getElementById("liveSttDisplay");
+    display.innerHTML = `<span class="stt-interim">Listening... Spoken text will appear here live.</span>`;
+}
+
+function stopVoice() {
+    isListening = false;
+    
+    if (recognition) {
+        try {
+            recognition.stop();
+        } catch(e) {}
+    }
+
+    fetch("{% url 'stop_voice' %}")
+        .then(res => res.json())
+        .then(data => {
+            if (poller) {
+                clearInterval(poller);
+                poller = null;
+            }
+            stopLocalVisualizer();
+            let badge = document.getElementById("sttStatusBadge");
+            badge.innerText = "OFFLINE";
+            badge.className = "stt-badge";
+            
+            let display = document.getElementById("liveSttDisplay");
+            display.innerHTML = `<span style="color: #666; font-style: italic;">Voice recognition stopped. Press "Start Listening" to resume.</span>`;
+            
+            document.getElementById('transcriptBox').innerHTML += "<br><i>Stopped listening.</i>";
+        });
+}
+
+function fetchLogs() {
+    fetch("{% url 'voice_logs' %}")
+        .then(res => res.json())
+        .then(data => {
+            let box = document.getElementById('transcriptBox');
+            if(data.logs && data.logs.length > 0) {
+                box.innerHTML = data.logs.join("<br>");
+                box.scrollTop = box.scrollHeight;
+            }
+        });
+}
+
+window.addEventListener("beforeunload", function() {
+    fetch("{% url 'stop_voice' %}", { keepalive: true });
+});
+</script>
+</html>

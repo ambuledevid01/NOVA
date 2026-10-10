@@ -1,0 +1,260 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NOVA - Neuro Optimized Vital Analysis</title>
+
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;800&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+<!-- External CSS -->
+<link rel="stylesheet" href="{% static 'css/home.css' %}">
+<style>
+.about-team-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 25px;
+    margin: 30px 0;
+}
+
+/* Golden Profile Cards on Home */
+.home-gold-profile-card {
+    background: linear-gradient(135deg, #d4af37 0%, #fff4b8 20%, #aa771c 45%, #ffd700 70%, #8a5a00 100%);
+    background-size: 200% 200%;
+    border-radius: 16px;
+    padding: 24px 20px;
+    text-align: center;
+    box-shadow: 0 12px 30px rgba(0,0,0,0.5), inset 0 0 12px rgba(255,255,255,0.4);
+    border: 1.5px solid #ffd700;
+    color: #1a1000;
+    position: relative;
+    transition: transform 0.3s ease;
+    animation: goldShimmerHome 6s infinite alternate;
+}
+
+@keyframes goldShimmerHome {
+    0% { background-position: 0% 50%; }
+    100% { background-position: 100% 50%; }
+}
+
+.home-gold-profile-card:hover {
+    transform: translateY(-6px);
+}
+
+.home-avatar-gold {
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3.5px solid #ffffff;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    margin-bottom: 12px;
+}
+
+.home-member-badge {
+    display: inline-block;
+    background: #2b1a00;
+    color: #ffd700;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: 3px 12px;
+    border-radius: 15px;
+    margin: 4px 0 10px;
+}
+
+.home-btn-group {
+    display: flex;
+    gap: 8px;
+    margin-top: 14px;
+}
+
+.home-btn-social {
+    flex: 1;
+    font-size: 0.75rem;
+    padding: 8px 10px;
+    border-radius: 6px;
+    text-decoration: none;
+    font-family: 'Orbitron', sans-serif;
+    font-weight: 700;
+    text-align: center;
+}
+
+.home-btn-linkedin {
+    background: #111827;
+    color: #ffd700;
+    border: 1px solid #ffd700;
+}
+
+.home-btn-linkedin:hover {
+    background: #0a66c2;
+    color: #fff;
+}
+
+.home-btn-email {
+    background: #2b1a00;
+    color: #ffffff;
+    border: 1px solid #ffffff;
+}
+
+.home-btn-email:hover {
+    background: #1abc9c;
+    color: #000;
+}
+
+.guide-box-home-gold {
+    background: linear-gradient(135deg, #d4af37 0%, #fff4b8 20%, #aa771c 45%, #ffd700 70%, #8a5a00 100%);
+    border: 1.5px solid #ffd700;
+    border-radius: 16px;
+    padding: 24px;
+    display: flex;
+    gap: 20px;
+    align-items: center;
+    margin-top: 30px;
+    color: #1a1000;
+    box-shadow: 0 12px 30px rgba(0,0,0,0.5);
+}
+</style>
+</head>
+
+<body>
+
+<nav>
+    <div class="logo">NOVA</div>
+
+    <ul>
+        <li><a href="{% url 'home_page' %}">Home</a></li>
+        <li><a href="#features">Features</a></li>
+        <li><a href="#about">About</a></li>
+        <li><a href="{% url 'user_guide' %}">User Guide</a></li>
+        <li><a href="{% url 'about_us' %}">About Us</a></li>
+    </ul>
+
+    <div class="button">
+    {% if request.user.is_authenticated %}
+    <button class="nav-btn"><a href="{% url 'logout_page' %}"> Logout </a></button>
+    {% else %}
+    <button class="nav-btn"><a href="{% url 'login_page' %}"> Login </a></button>
+    <button class="nav-btn"><a href="{% url 'register_page' %}"> Register </a></button>
+    {% endif %}
+    </div>
+</nav>
+
+<section class="hero">
+    <h1>NOVA</h1>
+    <h2>Neuro Optimized Vital Analysis</h2>
+    <p>
+        An AI-powered intelligent health analytics platform designed to monitor, 
+        interpret and optimize human vital signals using advanced neural systems.
+    </p>
+    {% if request.user.is_authenticated %}
+    <button class="primary-btn" onclick="window.location.href='{% url 'dashboard_page' %}'">Get Started</button>
+    {% else %}
+    <button class="primary-btn" onclick="window.location.href='{% url 'login_page' %}'">Get Started</button>
+    {% endif %}
+</section>
+
+<section class="features" id="features">
+    <h2 class="section-title">Core Capabilities</h2>
+
+    <div class="feature-grid">
+        <div class="feature-card">
+            <h3>Neural Vital Monitoring</h3>
+            <p>Real-time analysis of biological and neurological vital parameters.</p>
+        </div>
+
+        <div class="feature-card">
+            <h3>AI Prediction Engine</h3>
+            <p>Machine learning models to forecast health anomalies before they occur.</p>
+        </div>
+
+        <div class="feature-card">
+            <h3>Secure Data Layer</h3>
+            <p>Encrypted health data architecture with scalable cloud integration.</p>
+        </div>
+
+        <div class="feature-card">
+            <h3>Insight Dashboard</h3>
+            <p>Actionable reports and analytics with intelligent recommendations.</p>
+        </div>
+    </div>
+</section>
+
+<section class="about" id="about" style="max-width:1100px; margin:0 auto; padding:60px 20px;">
+    <h2 class="section-title">About Us</h2>
+    <p style="text-align:center; max-width:800px; margin:0 auto 30px; font-size:1.05rem; color:#cbd5e1; line-height:1.7;">
+        This project is a <strong>Final Year Project</strong> developed by students of <strong>JD College of Engineering</strong> with the aim of applying our technical knowledge to build a practical and useful web-based solution.
+    </p>
+
+    <h3 style="font-family:'Orbitron',sans-serif; color:#ffd700; font-size:1.2rem; text-align:center; margin-bottom:20px;">Project Team</h3>
+
+    <div class="about-team-grid">
+        <!-- Devid Ambule -->
+        <div class="home-gold-profile-card">
+            <img src="{% static 'images/devid_avatar.png' %}" alt="Devid Ambule" class="home-avatar-gold">
+            <h4 style="font-family:'Orbitron',sans-serif; color:#1a0f00; font-size:1.15rem; font-weight:800;">Devid Ambule</h4>
+            <div class="home-member-badge">Website Development</div>
+            <p style="font-size:0.85rem; color:#261800; line-height:1.45; font-weight:500;">Responsible for designing, developing, and implementing the website structure and functionality.</p>
+            <div class="home-btn-group">
+                <a href="https://www.linkedin.com/in/ambuledevid/" target="_blank" class="home-btn-social home-btn-linkedin">LinkedIn</a>
+                <a href="mailto:#" class="home-btn-social home-btn-email">Email</a>
+            </div>
+        </div>
+
+        <!-- Ashish Kathane -->
+        <div class="home-gold-profile-card">
+            <img src="{% static 'images/ashish_avatar.png' %}" alt="Ashish Kathane" class="home-avatar-gold">
+            <h4 style="font-family:'Orbitron',sans-serif; color:#1a0f00; font-size:1.15rem; font-weight:800;">Ashish Kathane</h4>
+            <div class="home-member-badge">Testing & QA</div>
+            <p style="font-size:0.85rem; color:#261800; line-height:1.45; font-weight:500;">Responsible for testing the website, identifying issues, and ensuring system quality.</p>
+            <div class="home-btn-group">
+                <a href="#" class="home-btn-social home-btn-linkedin">LinkedIn</a>
+                <a href="mailto:#" class="home-btn-social home-btn-email">Email</a>
+            </div>
+        </div>
+
+        <!-- Kavya Khobragade -->
+        <div class="home-gold-profile-card">
+            <img src="{% static 'images/kavya_avatar.png' %}" alt="Kavya Khobragade" class="home-avatar-gold">
+            <h4 style="font-family:'Orbitron',sans-serif; color:#1a0f00; font-size:1.15rem; font-weight:800;">Kavya Khobragade</h4>
+            <div class="home-member-badge">Research & Docs</div>
+            <p style="font-size:0.85rem; color:#261800; line-height:1.45; font-weight:500;">Responsible for conducting research and supporting the project with documentation.</p>
+            <div class="home-btn-group">
+                <a href="#" class="home-btn-social home-btn-linkedin">LinkedIn</a>
+                <a href="mailto:#" class="home-btn-social home-btn-email">Email</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Project Guide Golden Box -->
+    <div class="guide-box-home-gold">
+        <img src="{% static 'images/prof_khushbu_avatar.png' %}" alt="Prof. Khushbu Bisen" style="width:95px; height:95px; border-radius:50%; object-fit:cover; border:3.5px solid #ffffff; box-shadow:0 4px 12px rgba(0,0,0,0.3);">
+        <div>
+            <h4 style="font-family:'Orbitron',sans-serif; color:#1a0f00; font-size:1.2rem; font-weight:800;">Prof. Khushbu Bisen</h4>
+            <div style="display:inline-block; background:#2b1a00; color:#ffd700; font-size:0.75rem; font-family:'Orbitron',sans-serif; padding:3px 12px; border-radius:15px; margin:4px 0 8px;">Project Guide — JD College of Engineering</div>
+            <p style="font-size:0.88rem; color:#261800; margin-top:2px; font-weight:500;">We sincerely acknowledge the guidance and support provided by our project guide throughout the development of this final-year project.</p>
+            <div class="home-btn-group" style="max-width:240px; margin-top:12px;">
+                <a href="#" class="home-btn-social home-btn-linkedin">LinkedIn</a>
+                <a href="mailto:#" class="home-btn-social home-btn-email">Email</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="cta">
+    <h2>Start Optimizing Your Vital Intelligence Today</h2>
+    {% if request.user.is_authenticated %}
+    <button class="primary-btn" onclick="window.location.href='{% url 'dashboard_page' %}'">Launch Platform</button>
+    {% else %}
+    <button class="primary-btn" onclick="window.location.href='{% url 'login_page' %}'">Launch Platform</button>
+    {% endif %}
+</section>
+
+<footer>
+    © 2026 NOVA - Neuro Optimized Vital Analysis | All Rights Reserved
+</footer>
+
+</body>
+</html>

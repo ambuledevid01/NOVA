@@ -1,0 +1,318 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NOVA | About Us — JD College of Engineering</title>
+
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;800&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<!-- Dashboard CSS -->
+<link rel="stylesheet" href="{% static 'css/dashboard/brain_control.css' %}">
+<link rel="stylesheet" href="{% static 'css/dashboard/voice_control.css' %}">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="{% static 'js/three_bg/voice_bg.js' %}"></script>
+
+<style>
+.about-hero {
+    background: #1e1e2d;
+    border: 1px solid rgba(212, 175, 55, 0.4);
+    border-radius: 14px;
+    padding: 30px 35px;
+    margin-bottom: 35px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+}
+
+.about-hero p {
+    color: #a2a5b9;
+    font-size: 1.05rem;
+    line-height: 1.7;
+    margin-top: 10px;
+}
+
+.section-subtitle {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1.3rem;
+    color: #ffd700;
+    margin-bottom: 25px;
+    letter-spacing: 1.5px;
+    text-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
+}
+
+.team-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
+    gap: 30px;
+    margin-bottom: 50px;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────
+   ELEGANT GOLDEN METALLIC PROFILE CARDS
+─────────────────────────────────────────────────────────────────────────── */
+.gold-profile-card {
+    background: linear-gradient(135deg, #d4af37 0%, #fff4b8 20%, #aa771c 45%, #ffd700 70%, #8a5a00 100%);
+    background-size: 200% 200%;
+    border-radius: 18px;
+    padding: 28px 24px;
+    text-align: center;
+    position: relative;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6), inset 0 0 15px rgba(255, 255, 255, 0.4);
+    border: 1.5px solid #ffd700;
+    color: #1a1000;
+    overflow: hidden;
+    transition: transform 0.35s ease, box-shadow 0.35s ease;
+    animation: goldShimmer 6s infinite alternate;
+}
+
+@keyframes goldShimmer {
+    0% { background-position: 0% 50%; }
+    100% { background-position: 100% 50%; }
+}
+
+.gold-profile-card:hover {
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: 0 25px 45px rgba(212, 175, 55, 0.5), inset 0 0 25px rgba(255, 255, 255, 0.6);
+}
+
+.avatar-wrapper-gold {
+    margin: 0 auto 16px;
+    position: relative;
+    display: inline-block;
+}
+
+.avatar-img-gold {
+    width: 105px;
+    height: 105px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 4px solid #ffffff;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+}
+
+.member-name-gold {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1.25rem;
+    font-weight: 800;
+    color: #1a0f00;
+    margin-bottom: 4px;
+    text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.6);
+}
+
+.member-role-badge {
+    display: inline-block;
+    background: #2b1a00;
+    color: #ffd700;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: 4px 14px;
+    border-radius: 20px;
+    margin-bottom: 14px;
+    border: 1px solid #ffd700;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.card-desc-text {
+    font-size: 0.88rem;
+    color: #261800;
+    line-height: 1.5;
+    margin-bottom: 20px;
+    min-height: 60px;
+    font-weight: 500;
+}
+
+.card-actions-gold {
+    display: flex;
+    gap: 12px;
+}
+
+.btn-gold-action {
+    flex: 1;
+    padding: 10px 14px;
+    border-radius: 8px;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-decoration: none;
+    text-align: center;
+    transition: all 0.25s ease;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.btn-gold-linkedin {
+    background: #111827;
+    color: #ffd700;
+    border: 1px solid #ffd700;
+}
+
+.btn-gold-linkedin:hover {
+    background: #0a66c2;
+    color: #ffffff;
+    border-color: #ffffff;
+    box-shadow: 0 0 15px rgba(10, 102, 194, 0.6);
+}
+
+.btn-gold-email {
+    background: #2b1a00;
+    color: #ffffff;
+    border: 1px solid #ffffff;
+}
+
+.btn-gold-email:hover {
+    background: #1abc9c;
+    color: #000000;
+    border-color: #1abc9c;
+    box-shadow: 0 0 15px rgba(26, 188, 156, 0.6);
+}
+
+/* Guide Card Box */
+.gold-guide-card {
+    background: linear-gradient(135deg, #d4af37 0%, #fff4b8 20%, #aa771c 45%, #ffd700 70%, #8a5a00 100%);
+    background-size: 200% 200%;
+    border-radius: 18px;
+    padding: 30px;
+    display: flex;
+    gap: 25px;
+    align-items: center;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6), inset 0 0 15px rgba(255, 255, 255, 0.4);
+    border: 1.5px solid #ffd700;
+    margin-bottom: 40px;
+    color: #1a1000;
+    animation: goldShimmer 6s infinite alternate;
+}
+
+.gold-guide-card:hover {
+    box-shadow: 0 25px 45px rgba(212, 175, 55, 0.5), inset 0 0 25px rgba(255, 255, 255, 0.6);
+}
+</style>
+</head>
+
+<body>
+<div class="dashboard-container">
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+    <div class="logo">NOVA Control Center</div>
+    <p class="sidebar-desc">
+        Navigate to get started or control your PC hands-free.
+    </p>
+
+    <div class="nav-title">Navigation</div>
+
+    <ul class="nav-list">
+        <li><a href="{% url 'home_page' %}">🏠 Home</a></li>
+        <li><a href="{% url 'user_guide' %}">📘 User Guide</a></li>
+        <li><a href="{% url 'eye_control' %}">👁 Eye Control</a></li>
+        <li><a href="{% url 'facial_exp' %}">😊 Facial Control</a></li>
+        <li><a href="{% url 'voice_control' %}">🎤 Voice Command Control</a></li>
+        <li><a href="{% url 'hand_control' %}">✋ Hand Gesture Control</a></li>
+        <li><a href="{% url 'head_control' %}">👤 Head Movement Control</a></li>
+        <li><a href="{% url 'settings_page' %}">⚙ Settings</a></li>
+        <li class="active"><a href="{% url 'about_us' %}">ℹ About Us</a></li>
+    </ul>
+
+    <div class="quick-tips">
+        <h4>Project Info</h4>
+        <ul>
+            <li>JD College of Engineering</li>
+            <li>Final Year Project 2026</li>
+            <li>Hands-Free AI System</li>
+        </ul>
+    </div>
+</aside>
+
+<!-- MAIN CONTENT -->
+<main class="main-content">
+
+<h1 class="page-title">About Us</h1>
+<p class="page-subtitle">
+Final Year Project — JD College of Engineering
+</p>
+
+<!-- PROJECT HERO CARD -->
+<div class="about-hero">
+    <h2 style="font-family:'Orbitron',sans-serif; color:#ffd700; font-size:1.2rem;">JD College of Engineering — Final Year Project</h2>
+    <p>
+        This project is a <strong>Final Year Project</strong> developed by students of <strong>JD College of Engineering</strong> with the aim of applying our technical knowledge to build a practical and useful web-based solution.
+    </p>
+</div>
+
+<!-- PROJECT TEAM -->
+<h2 class="section-subtitle">Project Team</h2>
+
+<div class="team-grid">
+    <!-- Devid Ambule -->
+    <div class="gold-profile-card">
+        <div class="avatar-wrapper-gold">
+            <img src="{% static 'images/devid_avatar.png' %}" alt="Devid Ambule" class="avatar-img-gold">
+        </div>
+        <div class="member-name-gold">Devid Ambule</div>
+        <div class="member-role-badge">Website Development</div>
+        <p class="card-desc-text">
+            Responsible for designing, developing, and implementing the website, including its structure, functionality, and user interface.
+        </p>
+        <div class="card-actions-gold">
+            <a href="https://www.linkedin.com/in/ambuledevid/" target="_blank" class="btn-gold-action btn-gold-linkedin" title="LinkedIn Profile">🔗 LinkedIn</a>
+            <a href="mailto:#" class="btn-gold-action btn-gold-email" title="Send Email">✉ Email</a>
+        </div>
+    </div>
+
+    <!-- Ashish Kathane -->
+    <div class="gold-profile-card">
+        <div class="avatar-wrapper-gold">
+            <img src="{% static 'images/ashish_avatar.png' %}" alt="Ashish Kathane" class="avatar-img-gold">
+        </div>
+        <div class="member-name-gold">Ashish Kathane</div>
+        <div class="member-role-badge">Testing & QA</div>
+        <p class="card-desc-text">
+            Responsible for testing the website, identifying issues, verifying functionality, and ensuring the system works as expected.
+        </p>
+        <div class="card-actions-gold">
+            <a href="#" class="btn-gold-action btn-gold-linkedin" title="LinkedIn Profile">🔗 LinkedIn</a>
+            <a href="mailto:#" class="btn-gold-action btn-gold-email" title="Send Email">✉ Email</a>
+        </div>
+    </div>
+
+    <!-- Kavya Khobragade -->
+    <div class="gold-profile-card">
+        <div class="avatar-wrapper-gold">
+            <img src="{% static 'images/kavya_avatar.png' %}" alt="Kavya Khobragade" class="avatar-img-gold">
+        </div>
+        <div class="member-name-gold">Kavya Khobragade</div>
+        <div class="member-role-badge">Research & Docs</div>
+        <p class="card-desc-text">
+            Responsible for conducting the required research, collecting relevant information, and supporting the project with research and documentation.
+        </p>
+        <div class="card-actions-gold">
+            <a href="#" class="btn-gold-action btn-gold-linkedin" title="LinkedIn Profile">🔗 LinkedIn</a>
+            <a href="mailto:#" class="btn-gold-action btn-gold-email" title="Send Email">✉ Email</a>
+        </div>
+    </div>
+</div>
+
+<!-- PROJECT GUIDE -->
+<h2 class="section-subtitle">Project Guide</h2>
+
+<div class="gold-guide-card">
+    <div style="flex-shrink:0; text-align:center;">
+        <img src="{% static 'images/prof_khushbu_avatar.png' %}" alt="Prof. Khushbu Bisen" class="avatar-img-gold" style="width:110px; height:110px;">
+    </div>
+    <div style="flex:1;">
+        <div class="member-name-gold" style="font-size:1.4rem;">Prof. Khushbu Bisen</div>
+        <div class="member-role-badge" style="background:#3b2600; color:#ffffff; border-color:#ffffff; margin-bottom:10px;">Project Guide — JD College of Engineering</div>
+        <p style="font-size:0.92rem; color:#261800; line-height:1.5; margin-bottom:16px; font-weight:500;">
+            We sincerely acknowledge the guidance and support provided by our project guide throughout the development of this final-year project.
+        </p>
+        <div class="card-actions-gold" style="max-width:280px;">
+            <a href="#" class="btn-gold-action btn-gold-linkedin">🔗 LinkedIn</a>
+            <a href="mailto:#" class="btn-gold-action btn-gold-email">✉ Email</a>
+        </div>
+    </div>
+</div>
+
+</main>
+</div>
+</body>
+</html>

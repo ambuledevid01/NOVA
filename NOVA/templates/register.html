@@ -1,0 +1,69 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Register | NOVA - Neuro Optimized Vital Analysis</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{% static 'css/register.css' %}">
+</head>
+
+<body>
+   
+
+<div class="login-container">
+    <br> 
+    <!-- Alert Box -->
+    <div class="login-box">
+        <h1 class="logo">NOVA</h1>  
+         {% if messages %} 
+       
+        {% for message in messages %} 
+         <div class="up_div"> 
+          <div role="alert"  class="register_alert ">{{message}} </div>
+         </div>
+        {% endfor %}
+        
+    {% endif %}
+      <br> 
+        <p class="tagline">Create Your Account</p>
+        
+        <form method="Post">
+        {% csrf_token %}
+            <div class="input-group">
+                <input type="text" name="firstname" required>
+                <label>First Name</label>
+            </div>
+
+            <div class="input-group">
+                <input type="text" name="lastname" required>
+                <label>Last Name</label>
+            </div>
+
+            <div class="input-group">
+                <input type="text" name="username" required>
+                <label>Username</label>
+            </div>
+
+            <div class="input-group">
+                <input type="password" name="password" required>
+                <label>Password</label>
+            </div>
+
+            <p class="register-text">
+                Already have an account?
+                <a href="/login/">Login here</a>
+            </p>
+
+            <button type="submit" class="auth-btn">Register</button>
+
+        </form>
+    </div>
+
+</div>
+
+</body>
+</html>

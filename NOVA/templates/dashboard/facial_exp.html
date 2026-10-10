@@ -1,0 +1,256 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NOVA | Facial Expression → Keyboard</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{% static 'css/dashboard/facial_exp.css' %}">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="{% static 'js/three_bg/facial_bg.js' %}"></script>
+<style>
+.notepad-container {
+    background: #111c34;
+    border: 1px solid rgba(79, 195, 247, 0.3);
+    border-radius: 10px;
+    padding: 20px;
+    margin-top: 30px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+}
+
+.notepad-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.notepad-header h3 {
+    font-family: 'Orbitron', sans-serif;
+    color: #4fc3f7;
+    font-size: 1.1rem;
+    margin: 0;
+}
+
+.notepad-area {
+    width: 100%;
+    height: 180px;
+    background: #090e1a;
+    color: #00e676;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 0.95rem;
+    line-height: 1.5;
+    padding: 15px;
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 8px;
+    resize: vertical;
+    outline: none;
+    box-sizing: border-box;
+}
+
+.clear-btn {
+    background: rgba(248, 113, 113, 0.2);
+    color: #fca5a5;
+    border: 1px solid #f87171;
+    padding: 5px 12px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 0.8rem;
+    transition: 0.2s;
+}
+
+.clear-btn:hover {
+    background: #f87171;
+    color: #000;
+}
+</style>
+</head>
+
+<body>
+
+<div class="dashboard-container">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+        <div class="logo">NOVA Control Center</div>
+        <p class="sidebar-desc">Navigate to get started or control your PC hands-free.</p>
+
+        <div class="nav-title">Navigation</div>
+
+        <ul class="nav-list">
+            <li><a href="{% url 'dashboard_page' %}">🏠 Home</a></li>
+            <li><a href="{% url 'user_guide' %}">📘 User Guide</a></li>
+            <li><a href="{% url 'eye_control' %}">👁 Eye-Movement Mouse Control</a></li>
+            <li class="active"><a href="{% url 'facial_exp'%}">😊 Facial Expression → Keyboard</a></li>
+            <li><a href="{% url 'voice_control' %}">🎤 Voice Control</a></li>
+            <li><a href="{% url 'hand_control' %}">✋ Hand Gesture Control</a></li>
+            <li><a href="{% url 'head_control' %}">👤 Head Movement Control</a></li>
+            <li><a href="{% url 'settings_page' %}">⚙ Settings</a></li>
+            <li><a href="{% url 'about_us' %}">ℹ About Us</a></li>
+        </ul>
+
+        <div class="quick-tips">
+            <h4>Quick Tips</h4>
+            <ul>
+                <li>Position face clearly in camera view</li>
+                <li>Smile to trigger Left Click (Space)</li>
+                <li>Raise eyebrows for Right Click (Enter)</li>
+                <li>Open mouth to Scroll Up</li>
+            </ul>
+        </div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="main-content">
+
+        <h1 class="page-title">Facial Expression → Keyboard</h1>
+        <p class="page-subtitle">
+            Detect facial expressions (Smile, Eyebrow Raise, Open Mouth) to trigger keyboard/mouse responses in real-time.
+        </p>
+
+        <div class="feature-wrapper">
+
+            <!-- LEFT SIDE -->
+            <div class="feature-left">
+                <h3>Live Preview</h3>
+                <div class="preview-box">
+                    <img id="videoFeed" 
+                         src="{% url 'facial_video_feed' %}" 
+                         width="100%" 
+                         style="display:none; border-radius:8px;">
+                    <span id="previewPlaceholder">Start the controller to see live video.</span>
+                </div>
+            </div>
+
+            <!-- RIGHT SIDE -->
+            <div class="feature-right">
+                <h3>Controls</h3>
+
+                <button class="btn-outline start-btn" onclick="runWithCountdown(startFacial)">▶ Start</button>
+                <button class="btn-outline stop-btn" onclick="stopFacial()">■ Stop</button>
+
+                <div class="camera-section" style="margin-top:15px;">
+                    <label>Camera index</label>
+                    <div class="camera-box">
+                        <span>0</span>
+                    </div>
+                </div>
+
+                <div class="tips-box" style="margin-top:20px; font-size:0.85rem; color:#90caf9;">
+                    💡 <strong>Gestures Active:</strong><br>
+                    • 😊 <strong>Smile:</strong> Left Click / Space<br>
+                    • 🤨 <strong>Eyebrow Raise:</strong> Right Click / Enter<br>
+                    • 😮 <strong>Open Mouth:</strong> Scroll Up
+                </div>
+            </div>
+
+        </div>
+
+        <!-- NOTEPAD INTERFACE (CAPTURED RESPONSES) -->
+        <div class="notepad-container">
+            <div class="notepad-header">
+                <h3>📝 Live Captured Responses (Notepad)</h3>
+                <button class="clear-btn" onclick="clearNotepad()">Clear Notepad</button>
+            </div>
+            <textarea id="notepad" class="notepad-area" readonly placeholder="Captured facial expression responses will appear here in real-time..."></textarea>
+        </div>
+
+        <h3 class="logs-title">Status</h3>
+
+        <div class="status-box">
+            <div class="status-text">Idle</div>
+        </div>
+
+    </main>
+
+</div>
+
+</body>
+<script>
+let pollInterval = null;
+
+function runWithCountdown(startAction) {
+    let countdownOverlay = document.getElementById("countdownOverlay");
+    if (!countdownOverlay) {
+        countdownOverlay = document.createElement("div");
+        countdownOverlay.id = "countdownOverlay";
+        countdownOverlay.style.cssText = "display:flex; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); color:white; font-size:12rem; font-family:'Orbitron', sans-serif; z-index:10000; justify-content:center; align-items:center;";
+        document.body.appendChild(countdownOverlay);
+    }
+    countdownOverlay.style.display = "flex";
+    let count = 3;
+    countdownOverlay.innerText = count;
+    let timer = setInterval(() => {
+        count--;
+        if (count > 0) {
+            countdownOverlay.innerText = count;
+        } else {
+            clearInterval(timer);
+            countdownOverlay.style.display = "none";
+            startAction();
+        }
+    }, 1000);
+}
+
+function startFacial() {
+    fetch("{% url 'start_facial' %}")
+        .then(res => res.json())
+        .then(data => {
+            if (data.status === "error") {
+                document.querySelector(".status-text").innerText = "❌ Error: " + data.message;
+                return;
+            }
+            document.getElementById("videoFeed").style.display = "block";
+            document.getElementById("previewPlaceholder").style.display = "none";
+            document.querySelector(".status-text").innerText = "Listening for expressions...";
+            startLogPolling();
+        })
+        .catch(() => {
+            document.querySelector(".status-text").innerText = "❌ Could not connect to server.";
+        });
+}
+
+function stopFacial() {
+    fetch("{% url 'stop_facial' %}")
+        .then(res => res.json())
+        .then(data => {
+            document.querySelector(".status-text").innerText = "Stopped";
+            stopLogPolling();
+        });
+}
+
+function startLogPolling() {
+    stopLogPolling();
+    pollInterval = setInterval(fetchLogs, 1000);
+}
+
+function stopLogPolling() {
+    if (pollInterval) clearInterval(pollInterval);
+}
+
+function fetchLogs() {
+    fetch("{% url 'facial_logs' %}")
+        .then(res => res.json())
+        .then(data => {
+            if (data.logs && data.logs.length > 0) {
+                const notepad = document.getElementById("notepad");
+                notepad.value = data.logs.join("\n");
+                notepad.scrollTop = notepad.scrollHeight;
+            }
+            if (data.status) {
+                document.querySelector(".status-text").innerText = data.status;
+            }
+        });
+}
+
+function clearNotepad() {
+    document.getElementById("notepad").value = "";
+}
+
+window.addEventListener("beforeunload", function() {
+    fetch("{% url 'stop_facial' %}", { keepalive: true });
+});
+</script>
+</html>
